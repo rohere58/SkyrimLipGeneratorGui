@@ -1,31 +1,31 @@
 # Lip GUI (Skyrim)
 
-Kleine grafische Oberfläche, um `LipGenerator.exe` stapelweise auf alle `.wav` Dateien in einem Ordner anzuwenden.
+A small GUI wrapper to run `LipGenerator.exe` in batch mode on all `.wav` files in a folder (Skyrim lip generation).
 
-## Voraussetzungen
+## Requirements
 
 - Windows
-- Der Ordner `LipGenerator/` liegt neben `lip_gui.py` und enthält:
+- A `LipGenerator/` folder next to `lip_gui.py` that contains:
 	- `LipGenerator.exe`
 	- `FonixData.cdf`
-- Python (im Workspace ist bereits eine `.venv` konfiguriert)
+- Python (this workspace already contains a configured `.venv`)
 
-## Start
+## Run from source
 
-Im Workspace-Root ausführen:
+From the workspace root:
 
 ```powershell
 ".\.venv\Scripts\python.exe" .\lip_gui.py
 ```
 
-## (Optional) Windows-EXE
+## (Optional) Windows EXE
 
-Im Ordner `dist/` liegt (wenn gebaut) die EXE:
+If you built it locally, the EXE is located at:
 
 - `dist/LipGUI.exe`
 
-Wichtig: Lege den Ordner `LipGenerator/` (mit `LipGenerator.exe` + `FonixData.cdf`) **neben** `LipGUI.exe`.
-Also z.B.:
+Important: put the `LipGenerator/` folder (with `LipGenerator.exe` + `FonixData.cdf`) **next to** `LipGUI.exe`.
+Example layout:
 
 ```text
 dist/
@@ -35,84 +35,84 @@ dist/
 		FonixData.cdf
 ```
 
-## Weitergeben / GitHub Releases
+## Sharing / GitHub Releases
 
-Du kannst das Tool (GUI/EXE/FAQ) auf GitHub veröffentlichen.
+You can publish the tool (GUI/EXE/FAQ) on GitHub.
 
-Wichtig: `LipGenerator.exe` und `FonixData.cdf` sind sehr wahrscheinlich Drittanbieter-Dateien.
-Bitte **nicht** mit ins GitHub-Repo oder Release packen, falls du dafür keine expliziten Rechte hast.
-Stattdessen:
+Important: `LipGenerator.exe` and `FonixData.cdf` are very likely third‑party files.
+Do **not** include them in your GitHub repo or releases unless you explicitly have the rights to redistribute them.
+Instead:
 
-- Release enthält `LipGUI.exe`, `FAQ_EN.md`, `settings.json`
-- Nutzer legen selbst `LipGenerator/` (mit `LipGenerator.exe` + `FonixData.cdf`) neben die EXE
+- Releases contain `LipGUI.exe`, `FAQ_EN.md`, `settings.json`
+- Users place their own `LipGenerator/` (with `LipGenerator.exe` + `FonixData.cdf`) next to the EXE
 
-### Automatischer Windows-Build (GitHub Actions)
+### Automated Windows builds (GitHub Actions)
 
-Wenn du einen Tag wie `v0.3.0` pushst, baut GitHub Actions automatisch die EXE und hängt ein ZIP ans Release.
+When you push a tag like `v0.3.0`, GitHub Actions automatically builds the EXE and attaches a ZIP to the GitHub Release.
 
-## Wichtig: Text wird benötigt
+## Important: text is required
 
-`LipGenerator.exe` benötigt neben der WAV-Datei immer auch den gesprochenen Text.
-Die GUI bietet deshalb mehrere Varianten:
+`LipGenerator.exe` always needs the spoken text in addition to the WAV file.
+The GUI supports multiple text sources:
 
-- **Aus `.txt`**: pro `foo.wav` muss es `foo.txt` geben (Inhalt = gesprochener Text)
-- **Aus Dateiname**: `Hello_World.wav` → `Hello World`
-- **Fester Text**: gleicher Text für alle Dateien
-- **Aus Mapping-Datei (CSV/TSV)**: z.B. `FormID` → `Text`
+- **From `.txt`**: for `foo.wav` there must be a `foo.txt` (content = spoken text)
+- **From filename**: `Hello_World.wav` → `Hello World`
+- **Fixed text**: same text for all files
+- **From a mapping file (CSV/TSV)**: e.g. `FormID` → `Text`
 
-### Mapping-Datei (CSV/TSV)
+### Mapping file (CSV/TSV)
 
-Wenn du den Text „nur“ in der übersetzten `*.esp` hast, ist der übliche Weg:
+If your text only exists inside the translated `*.esp`, the usual approach is:
 
-1. Exportiere die Dialog-/Untertiteltexte aus der ESP in eine Tabelle (CSV/TSV).
-2. Stelle sicher, dass du pro Voice-Line eine ID hast, die zu deinem WAV-Dateinamen passt.
+1. Export the dialogue/subtitle text from the ESP into a table (CSV/TSV).
+2. Ensure each voice line has an ID that matches your WAV filename.
 
-In Skyrim sind Voice-Dateien häufig nach der **FormID** der `INFO`-Zeile benannt (8 Hex-Zeichen), z.B. `000A1234.wav`.
-Je nach Tool-Export kann der Schlüssel aber auch der **WAV-Dateiname** oder sogar ein **Pfad** sein — die GUI reduziert das automatisch auf den Dateinamen.
+In Skyrim, voice files are often named after the **INFO FormID** (8 hex characters), e.g. `000A1234.wav`.
+Depending on the export tool, the key might be the **WAV filename** or even a **path** — the GUI normalizes this down to the filename automatically.
 
-**Format-Beispiel (TSV empfohlen):**
+**Example format (TSV recommended):**
 
 ```text
-000A1234	Hallo, Reisender.
-000A1235	Willkommen in Weißlauf.
+000A1234	Hello, traveler.
+000A1235	Welcome to Whiterun.
 ```
 
-Die GUI versucht bei WAV-Dateinamen, die mit 8 Hex-Zeichen anfangen, automatisch diese 8 Zeichen als Schlüssel zu nutzen.
-Wenn kein Eintrag gefunden wird, fällt sie auf „Text aus Dateiname“ zurück und schreibt einen Warnhinweis ins Log.
+The GUI tries to use the first 8 hex characters as the key when the filename starts with them.
+If no mapping entry is found, it falls back to “Text from filename” and writes a warning to the log.
 
-### Praktischer Workflow (xTranslator + LazyVoiceFinder)
+### Practical workflow (xTranslator + LazyVoiceFinder)
 
-- **WAVs finden:** LazyVoiceFinder kann deine Voice-Dateien finden und als CSV exportieren.
-- **Text bekommen:** Exportiere aus xTranslator (oder aus deinem Workflow) die übersetzten Untertitel/Zeilen.
-- **Mapping erstellen:** Ideal ist eine Datei, die pro Voice-Line *einen* Schlüssel und *den* Text enthält.
+- **Find WAVs:** LazyVoiceFinder can scan your voice assets and export CSV.
+- **Get text:** Export your translated lines from xTranslator (or your workflow).
+- **Build mapping:** ideally one file that contains *one* key per voice line + the text.
 
-Die GUI kommt mit typischen CSV/TSV-Exporten klar, solange irgendwo Spalten wie diese vorkommen:
+The GUI works with many CSV/TSV exports as long as it can find columns similar to:
 
-- Schlüssel: `FormID` oder `FileName`/`WAV`/`Path`
-- Text: `Text`/`Subtitle` oder `Translated`/`Target`
+- Key: `FormID` or `FileName`/`WAV`/`Path`
+- Text: `Text`/`Subtitle` or `Translated`/`Target`
 
-Optional (aber hilfreich, wenn Dateinamen nicht eindeutig sind):
+Optional (but helpful if filenames are not unique):
 
-- Ordner/Voice: `Voice Type`
+- Folder/voice: `Voice Type`
 
-Wenn `Voice Type` vorhanden ist, nutzt die GUI zusätzlich Schlüssel wie `voicetype/filename`.
+If `Voice Type` exists, the GUI also tries composite keys like `voicetype/filename`.
 
-### CSVs zusammenführen (wenn du pro Ordner exportierst)
+### Merging CSV exports (if you exported per folder)
 
-Wenn du LazyVoiceFinder bisher pro Unterordner eine eigene CSV exportierst, kannst du sie automatisch zu einer Mapping-Datei zusammenführen:
+If you exported one LazyVoiceFinder CSV per subfolder, you can combine them into a single mapping:
 
-- **Einfachste Variante:** In der GUI bei der Mapping-Datei **mehrere CSVs gleichzeitig auswählen** (die GUI merged intern automatisch).
+- **Simplest:** In the GUI, you can select **multiple CSVs at once** for the mapping input (the GUI merges them internally).
 
-1. Lege alle exportierten `*.csv` Dateien in **einen** Ordner, z.B. `exports/`
-2. Führe aus:
+1. Put all exported `*.csv` files into **one** folder, e.g. `exports/`
+2. Run:
 
 ```powershell
 ".\.venv\Scripts\python.exe" .\merge_lazyvoice_csv.py .\exports -o .\all_voices.tsv
 ```
 
-3. Wähle in der GUI als Mapping-Datei dann `all_voices.tsv` aus.
+3. In the GUI, choose `all_voices.tsv` as your mapping file.
 
 ## Output
 
-- Output-Dateien werden als `.lip` geschrieben.
-- Bei aktivierter Option **Ordnerstruktur beibehalten** werden Unterordner unter dem Output-Ordner nachgebildet.
+- Output files are written as `.lip`.
+- If **Preserve folder structure** is enabled, subfolders are recreated under the output folder.
