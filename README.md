@@ -10,6 +10,12 @@ A small GUI wrapper to run `LipGenerator.exe` in batch mode on all `.wav` files 
 	- `FonixData.cdf`
 - Python (this workspace already contains a configured `.venv`)
 
+Tip: If you have Skyrim Special Edition installed via Steam, these files are often located under:
+
+```text
+...\steam\steamapps\common\Skyrim Special Edition\Tools\LipGen\LipGenerator
+```
+
 ## Run from source
 
 From the workspace root:

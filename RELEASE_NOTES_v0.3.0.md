@@ -10,6 +10,12 @@
 ## Important: third-party files (not included)
 This release does **not** include `LipGenerator.exe` and `FonixData.cdf` (likely third-party files).
 
+If you have Skyrim Special Edition installed via Steam, these files are often located under:
+
+```text
+...\steam\steamapps\common\Skyrim Special Edition\Tools\LipGen\LipGenerator
+```
+
 You must provide these files yourself and place them like this:
 
 ```text
