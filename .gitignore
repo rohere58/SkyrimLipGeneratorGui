@@ -1,0 +1,20 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# Third-party / local tools (do not publish unless you have rights)
+LipGenerator/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# VS Code
+.vscode/

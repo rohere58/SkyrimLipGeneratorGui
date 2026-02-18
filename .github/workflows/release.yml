@@ -1,0 +1,58 @@
+name: Build & Release (Windows)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build EXE
+        run: |
+          pyinstaller --noconsole --onefile --name LipGUI lip_gui.py
+
+      - name: Prepare release bundle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path bundle | Out-Null
+          Copy-Item -Force dist\LipGUI.exe bundle\LipGUI.exe
+          Copy-Item -Force FAQ_EN.md bundle\FAQ_EN.md
+          Copy-Item -Force settings.json bundle\settings.json
+
+          # Create a placeholder folder to show required layout.
+          New-Item -ItemType Directory -Force -Path bundle\LipGenerator | Out-Null
+          Set-Content -Encoding utf8 -Path bundle\LipGenerator\PUT_LipGenerator_FILES_HERE.txt -Value "Put LipGenerator.exe and FonixData.cdf in this folder.\n\nThese files are NOT included in this release."
+
+          Compress-Archive -Force -Path bundle\* -DestinationPath LipGUI-windows.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: LipGUI-windows
+          path: LipGUI-windows.zip
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: LipGUI-windows.zip
